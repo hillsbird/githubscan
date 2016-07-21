@@ -1,0 +1,201 @@
+body {
+	margin: 0;
+	padding: 0;
+	color: #000;
+	background-color: #fff;
+	font: 100%/1.2 sans-serif;
+}
+:link {
+		color: #1593D3;
+}
+:visited {
+		color: #38C;
+}
+.demo-header {
+	font-family: Source Sans Pro, sans-serif;
+	font-size: 14px;
+	font-size: .9rem;
+	padding: 14.4px 15px 10px;
+	padding: .9rem 15px .625rem;
+	border-bottom: 4px solid #619d43;
+	box-shadow: inset 0 -1px 1px -1px #d8e6d0;
+	text-align: left;
+}
+.demo-header h1 {
+	font-size: 14px;
+	font-size: .9rem;
+	font-weight: 400;
+}
+.demo-header .company img {
+	height: 40px;
+}
+
+.demo-header .description-container {
+	margin: 8px 0;
+	margin: .5rem 0;
+}
+
+.demo-header .repo-name {
+	font-weight: 700;
+}
+.demo-header .repo-name:after {
+	display: inline-block;
+	content: ":";
+}
+.demo-header .outbound-links,
+.demo-header .outbound-links li {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.demo-header .outbound-links li {
+	display: inline-block;
+}
+.demo-header .outbound-links li:first-child:before {
+	content: '';
+	margin-right: 0;
+}
+.demo-header .outbound-links li:before {
+	content: "|";
+	color: #999;
+	display: inline-block;
+	margin-right: 5px;
+}
+.demo-header .outbound-links li > a {
+	text-decoration: none;
+	color: #2a93e9;
+}
+
+@media (min-width: 48em){
+	.demo-header,
+	.demo-header h1 {
+		font-size: 16px;
+		font-size: 1rem;
+	}
+	.demo-header .company,
+	.demo-header .details {
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.demo-header .company {
+		margin-right: 60px;
+	}
+}
+
+
+.docs-main {
+	margin: 1em;
+	max-width: 60em;
+}
+
+
+pre {
+	white-space: pre-line;
+}
+code {
+	font-size: 1.1em;
+	font-weight: 700;
+}
+
+.nav-container:before,
+.nav-container:after {
+	content: " "; /* 1 */
+	display: table; /* 2 */
+}
+.nav-container:after {
+	clear: both;
+}
+.nav-container {
+	*zoom: 1;
+}
+.docs-globalnav {
+	list-style-type: none;
+	float: left;
+	width: 100%;
+	background-color: #F2F1ED;
+	margin: 0;
+	padding: 0;
+}
+.docs-globalnav a {
+	padding: 0.6em 1.5em 0.5em;
+	display: block;
+	border-bottom: 1px solid #DDD;
+}
+.docs-nav a {
+	font-size: 0.9em;
+}
+.docs-nav a.current {
+	background: #fff;
+}
+.docs-nav a:link,
+.docs-nav a:visited {
+	color:#38c;
+	text-decoration:none;
+}
+.docs-nav a:hover {
+	color:#37b;
+	text-decoration:underline;
+}
+@media screen and (min-width: 50em) {
+	.docs-globalnav .docs-nav {
+		border: none;
+		padding: .25em 0 0 0;
+	}
+	.docs-globalnav a {
+		padding: .8em 1.5em;
+		float: left;
+		border-bottom: none;
+	}
+
+}
+
+.nav-container-large .docs-globalnav:before {
+	content: "Menu";
+	background: url('https://filamentgroup.github.io/demo-head/img/menubars.png') no-repeat scroll 1.5em 50% transparent;
+	color: #555;
+	padding: 1em 3.5em;
+	display: block;
+}
+.nav-container-large .docs-globalnav a {
+	position: absolute;
+	left: -999px;
+	display: block;
+}
+.nav-container-large .docs-globalnav.menuopen a {
+	position: static;
+}
+
+
+@media (min-width: 54em){
+	.nav-container-large .docs-globalnav:before {
+		content: "";
+		background: none;
+		color: transparent;
+		padding: 0;
+		display: inline;
+	}
+	.nav-container-large .docs-globalnav {
+		display: block;
+		float: none;
+		background-color: #F2F1ED;
+	}
+	.nav-container-large .docs-globalnav a {
+		position: static;
+		float: none;
+		border-bottom: 1px solid #DDD;
+	}
+
+	.nav-container-large {
+		clear: none;
+		float: left;
+		display: block;
+		width: 25%;
+	}
+	.nav-container-large + .docs-main {
+		float: right;
+		width: 75%;
+	}
+	.nav-container-large + .docs-main h3 {
+		text-align: center;
+	}
+}

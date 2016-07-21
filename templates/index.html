@@ -1,0 +1,149 @@
+$def with(data,info)
+<html>
+<head>
+<title>Githubscan</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../static/tablesaw.css">
+<link rel="stylesheet" href="../static/demo.css">
+<link rel="stylesheet" href="//filamentgroup.github.io/demo-head/demohead.css">
+
+<!--[if lt IE 9]><script src="../dist/dependencies/respond.js"></script><![endif]-->
+<script src="../static/jquery.js"></script>
+<script src="../static/tablesaw.js"></script>
+<script src="../static/tablesaw-init.js"></script>
+<script src="//filamentgroup.github.io/demo-head/loadfont.js"></script>
+
+
+<style type="text/css">
+.mui-switch {
+  width: 52px;
+  height: 31px;
+  position: relative;
+  border: 1px solid #dfdfdf;
+  background-color: #fdfdfd;
+  box-shadow: #dfdfdf 0 0 0 0 inset;
+  border-radius: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-clip: content-box;
+  display: inline-block;
+  -webkit-appearance: none;
+  user-select: none;
+  outline: none; }
+  .mui-switch:before {
+    content: '';
+    width: 29px;
+    height: 29px;
+    position: absolute;
+    top: 0px;
+    left: 0;
+    border-radius: 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+  .mui-switch:checked {
+    border-color: #64bd63;
+    box-shadow: #64bd63 0 0 0 16px inset;
+    background-color: #64bd63; }
+    .mui-switch:checked:before {
+      left: 21px; }
+  .mui-switch.mui-switch-animbg {
+    transition: background-color ease 0.4s; }
+    .mui-switch.mui-switch-animbg:before {
+      transition: left 0.3s; }
+    .mui-switch.mui-switch-animbg:checked {
+      box-shadow: #dfdfdf 0 0 0 0 inset;
+      background-color: #64bd63;
+      transition: border-color 0.4s, background-color ease 0.4s; }
+      .mui-switch.mui-switch-animbg:checked:before {
+        transition: left 0.3s; }
+  .mui-switch.mui-switch-anim {
+    transition: border cubic-bezier(0, 0, 0, 1) 0.4s, box-shadow cubic-bezier(0, 0, 0, 1) 0.4s; }
+    .mui-switch.mui-switch-anim:before {
+      transition: left 0.3s; }
+    .mui-switch.mui-switch-anim:checked {
+      box-shadow: #64bd63 0 0 0 16px inset;
+      background-color: #64bd63;
+      transition: border ease 0.4s, box-shadow ease 0.4s, background-color ease 1.2s; }
+      .mui-switch.mui-switch-anim:checked:before {
+        transition: left 0.3s; }
+</style>
+</head>
+<body>
+
+<script type="text/javascript" src="./static/jquery-1.4.2.min.js"></script>
+
+<script type="text/javascript">
+
+jQuery(function(){
+	var count = 0;
+        jQuery(".tablesaw :checkbox").click(function(){
+                var txtvalue = jQuery(this).parent().prev().prev().prev().text();
+                if (jQuery(".txtValue").val() == ""){
+                        if (jQuery(this).attr("checked") == true){
+                                var txtalso = jQuery.trim(txtvalue);
+                        } else {
+                                var txtalso = "";
+                        }
+                }
+                else {
+                        if (jQuery(this).attr("checked") == true){
+                                var txtalso = jQuery.trim(jQuery(".txtValue").val()) + "," + jQuery.trim(txtvalue);
+                        }
+                        else {
+                                var txtelse = jQuery.trim(jQuery(".txtValue").val());
+                                var txtnow = jQuery.trim(txtvalue);
+                                var reg1 = "," + txtnow;
+                                var reg2 = txtnow + ",";
+                                var reg3 = txtnow;
+                                var txtelse = txtelse.replace(reg1, "").replace(reg2, "").replace(reg3, "");
+                                var txtalso = txtelse;
+                        }
+                }
+                jQuery(".txtValue").val(txtalso);
+                count++;
+
+        });
+});
+
+
+
+</script>
+
+
+$info
+
+<table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+
+<table bgcolor="#313030" class="tablesaw"><!-- data-tablesaw-mode="swipe" data-tablesaw-sortable data-tablesaw-sortable-switch data-tablesaw-minimap data-tablesaw-mode-switch>-->
+<thead>
+	<tr bgcolor="#313030">
+		<th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"><font color="#72ACE3">Url</th>
+		<th scope="col" data-tablesaw-sortable-col data-tablesaw-sortable-default-col data-tablesaw-priority="3"><font color="#72ACE3">Keyword</th>
+		<th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1"><font color="#72ACE3">Time</th>
+		<th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2"><abbr title="Rotten Tomato Rating"><font color="#72ACE3">Whitelist</abbr></th>
+	</tr>
+</thead>
+<tbody>
+	<form action="/" method="POST">
+	<input class="txtValue" type="text" name="name" value=""/>
+	<button type="submit" id="submit" name="submit">submit</button>
+	</form>
+	$if data is not None:
+		$for d in data:
+			<tr>
+				<td class="title"><a href=$d[0]>$d[0]</a></td>
+				<td><font color="#72ACE3">$d[1]</td>
+				<td><font color="#72ACE3">$d[2]</td>
+				<td><input name="name" class="mui-switch mui-switch-anim" type="checkbox" value=" "/></td>
+			</tr>
+</tbody>
+</body>
+</html>
