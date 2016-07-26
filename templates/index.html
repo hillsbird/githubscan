@@ -125,6 +125,8 @@ $info
 <table bgcolor="#313030" class="tablesaw"><!-- data-tablesaw-mode="swipe" data-tablesaw-sortable data-tablesaw-sortable-switch data-tablesaw-minimap data-tablesaw-mode-switch>-->
 <thead>
 	<tr bgcolor="#313030">
+		<th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"><font color="#72ACE3">Username</th>
+		<th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"><font color="#72ACE3">Filename</th>
 		<th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"><font color="#72ACE3">Url</th>
 		<th scope="col" data-tablesaw-sortable-col data-tablesaw-sortable-default-col data-tablesaw-priority="3"><font color="#72ACE3">Keyword</th>
 		<th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1"><font color="#72ACE3">Time</th>
@@ -139,6 +141,8 @@ $info
 	$if data is not None:
 		$for d in data:
 			<tr>
+				<td><font color="#72ACE3">$d[5]</td>
+				<td><font color="#72ACE3">$d[6]</td>
 				<td class="title"><a href=$d[0]>$d[0]</a></td>
 				<td><font color="#72ACE3">$d[1]</td>
 				<td><font color="#72ACE3">$d[2]</td>

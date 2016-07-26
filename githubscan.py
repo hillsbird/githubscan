@@ -6,10 +6,9 @@ import time
 import redis
 import MySQLdb
 
-
 w = list()
 conn = MySQLdb.connect(host='localhost',port=8999,user='wei',passwd='hehe',db='github')
-keyword = ["xxx"]
+keyword = []
 whitelist = []
 user_agent = "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0 security_test"
 class githubscan:
@@ -59,24 +58,33 @@ class githubscan:
 			print "no url!!!"
 		return url
 
-	def find_name(self,s):
-		m1 = re.findall(r'</a>\n       &#8211;',s)
-		m2 = re.findall(r'</a> <br>\n      <span class="text-small text-muted match-count">',s)
-		if m1 and m2:
-			name = list()
-			i = 0
-			for n in m1:
-				na = n+"-"+m2[i]
-				i = i + 1
-				name.append(na)
+	def find_username(self,s):
+		m = re.findall(r'"><img alt="@(.+?)" class',s)
+		if m:
+			username = list()
+			for r in m:
+				username.append(r)
 		else:
-			print "name is none!!!"
-		return name
+			print "no username!!!"
+		return username
+
+	def find_reponame(self,s):
+		m = re.findall(r'">(.+?)</a> <br>\n      <span class="text-small text-muted match-count">',s)
+		if m:
+			print m
+			reponame = list()
+			for r in m:
+				reponame.append(r)
+		else:
+			print "no reponame!!!"
+		return reponame
 
 	def run(self):
 		the_url = list()
 		the_time = list()
-		the_name = list()
+		the_username = list()
+		the_reponame = list()
+		tur  = list()
 		result = dict()
 		target1 = "https://github.com/search?&q="+self.key+"&type=Code"
 		html1 = self.send(target1)
@@ -84,6 +92,7 @@ class githubscan:
 		page_num = self.find_count(html1)
 		print "get total num done!!!"
 		print "send each request..."
+		t = 0
 		for i in range(1,page_num+1):
 			target = "https://github.com/search?p="+str(i)+"&q="+self.key+"&ref=searchresults&type=Code"
 			time.sleep(5)
@@ -91,9 +100,12 @@ class githubscan:
 			if html is not None:
 				the_url = self.find_url(html)
 				the_time = self.find_time(html)
-				t = 0
+				the_username = self.find_username(html)
+				the_reponame = self.find_reponame(html)
+				for j in range(0,len(the_url)):
+					tur.append(the_time[j]+"="+the_username[j]+"="+the_reponame[j])
 				for u in the_url:
-					result[u] = the_time[t]
+					result[u] = tur[t]
 					t=t+1
 			else:
 				print "No."+str(i)+" is None!!!"
@@ -114,6 +126,19 @@ class githubscan:
 			conn.rollback()
 		for k in result.keys():
 			print k
+			print result[k]
+			ti,un,rn = result[k].split("=")
+			try:
+				cur = conn.cursor()
+				sql = "update result set username='"+un+"',reponame='"+rn+"' where url='"+k+"';"
+				n = cur.execute(sql)
+				cur.close()
+				conn.commit()
+				print "update ok!!!"
+			except Exception,e:
+				print e
+				conn.rollback()
+
 			if k in whitelist:
 				print "in white!!!"
 			else:
@@ -131,8 +156,8 @@ class githubscan:
 						try:
 							print "insert new into db..."
 							cur = conn.cursor()
-							sql = "insert into result (url,keyword,time,is_del,is_white) values (%s,%s,%s,%s,%s);"
-							param = (k,self.key,result[k],0,0)
+							sql = "insert into result (url,keyword,time,is_del,is_white,username,reponame) values (%s,%s,%s,%s,%s,%s,%s);"
+							param = (k,self.key,ti,0,0,un,rn)
 							n = cur.execute(sql,param)
 							cur.close()
 							conn.commit()
@@ -141,8 +166,32 @@ class githubscan:
 							print e
 							conn.rollback()
 					else:
+						print "check is_del..."
+						try:
+							cur = conn.cursor()
+							sql = "select is_del from result where url = '"+k+"';"
+							n = cur.execute(sql)
+							cc = cur.fetchall()
+							print cc
+							c = cc[0][0]
+							cur.close()
+							conn.commit()
+						except Exception,e:
+							print e
+							conn.rollback()
+						if c == 1:
+							try:
+								cur = conn.cursor()
+								sql = "update result set is_del=0 where url='"+k+"';"
+								n = cur.execute(sql)
+								cur.close()
+								conn.commit()
+							except Exception,e:
+								print e
+								conn.rollback()
+						print "check is_del done!!!"
 						print "check if is new update..."
-						new_time = filter(str.isdigit,result[k])
+						new_time = filter(str.isdigit,ti)
 						try:
 							cur = conn.cursor()
 							sql = "select time from result where url ='"+k+"';"
