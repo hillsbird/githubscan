@@ -1,32 +1,20 @@
-import urllib
-import urllib2
 import string
 import re
 import time
 import redis
 import MySQLdb
+import requests
 
 w = list()
 conn = MySQLdb.connect(host='localhost',port=8999,user='wei',passwd='hehe',db='github')
-keyword = []
+keyword = ["qufenqi","laifenqi","qudian"]
 whitelist = []
 user_agent = "User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0 security_test"
+
 class githubscan:
 	def __init__(self,key):
 		self.key = key
-	def send(self,t):
-		target = t
-		print target
-		try:
-			req = urllib2.Request(target)
-			req.add_header('User-Agent',user_agent)
-			rep = urllib2.urlopen(req)
-			httpcode = rep.getcode()
-			html = rep.read()
-			return html
-		except Exception,e:
-			print e
-			return None
+
 	def find_count(self,s):
 		m = re.search(r'">(\d+?)</a> <a class="next_page" rel="next"',s)
 		if m:
@@ -69,7 +57,7 @@ class githubscan:
 		return username
 
 	def find_reponame(self,s):
-		m = re.findall(r'">(.+?)</a> <br>\n      <span class="text-small text-muted match-count">',s)
+		m = re.findall(r'">(.+?)</a> <br>\n      <span class="text-small text-gray match-count">',s)
 		if m:
 			print m
 			reponame = list()
@@ -78,7 +66,7 @@ class githubscan:
 		else:
 			print "no reponame!!!"
 		return reponame
-
+			
 	def run(self):
 		the_url = list()
 		the_time = list()
@@ -86,18 +74,37 @@ class githubscan:
 		the_reponame = list()
 		tur  = list()
 		result = dict()
-		target1 = "https://github.com/search?&q="+self.key+"&type=Code"
-		html1 = self.send(target1)
+		session = requests.Session()
+		url1 = "https://github.com/login"
+		rep1 = session.get(url1)
+		pattern = re.compile(r'<input name="authenticity_token" type="hidden" value="(.*)" />')
+		a_token = pattern.findall(rep1.content)[0]
+
+		url2 = "https://github.com/session"
+		data2 = {
+			'commit':'Sign+in',
+			'utf8':'%E2%9C%93',
+			'authenticity_token':a_token,
+			'login':'mrwei0323',
+			'password':'12qw!@QW'
+		}
+		rep2 = session.post(url2,data=data2)
+
+		url3 = "https://github.com/search?&q="+self.key+"&type=Code"
+		rep3 = session.get(url3)
 		print "get total page num..."
-		page_num = self.find_count(html1)
+		page_num = self.find_count(rep3.content)
 		print "get total num done!!!"
 		print "send each request..."
 		t = 0
 		for i in range(1,page_num+1):
-			target = "https://github.com/search?p="+str(i)+"&q="+self.key+"&ref=searchresults&type=Code"
+			target = 'https://github.com/search?p='+str(i)+'&q="'+self.key+'"&ref=searchresults&type=Code'
+			print target
 			time.sleep(5)
-			html = self.send(target)
+			thehtml = session.get(target)
+			html = thehtml.content
 			if html is not None:
+				print html
 				the_url = self.find_url(html)
 				the_time = self.find_time(html)
 				the_username = self.find_username(html)
@@ -110,7 +117,7 @@ class githubscan:
 			else:
 				print "No."+str(i)+" is None!!!"
 		print "finish result!!!"
-		print result
+		print result		
 		try:
 			print "check whitelist..."
 			cur = conn.cursor()
@@ -221,9 +228,9 @@ class githubscan:
 							print "is not new update!!!"
 				except Exception,e:
 					print e
-					conn.rollback()
+					conn.rollback()		
 
-
+						
 		#result no db yes
 		try:
 			"check del..."
@@ -259,9 +266,10 @@ class githubscan:
 		print "ccc="+str(ccc)
 
 
-
+		
 if __name__ == '__main__':
 	print "githubscan start..."
+	
 	for kw in keyword:
 		gs = githubscan(kw)
 		gs.run()
