@@ -85,8 +85,8 @@ class githubscan:
 			'commit':'Sign+in',
 			'utf8':'%E2%9C%93',
 			'authenticity_token':a_token,
-			'login':'mrwei0323',
-			'password':'12qw!@QW'
+			'login':'',
+			'password':''
 		}
 		rep2 = session.post(url2,data=data2)
 
