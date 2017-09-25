@@ -1,4 +1,3 @@
-#t00ls喷子死全家
 import string
 import re
 import time
